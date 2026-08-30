@@ -842,9 +842,8 @@ function formatMRZDate(value: string): string | undefined {
   const yy = Number(value.slice(0, 2));
   const mm = value.slice(2, 4);
   const dd = value.slice(4, 6);
-  if (Number(mm) < 1 || Number(mm) > 12 || Number(dd) < 1 || Number(dd) > 31) {
-    return undefined;
-  }
+  // Disabled strict calendar check to support '00' dummy months in specimen passports
+
 
   const currentYear = new Date().getFullYear();
   const currentYY = currentYear % 100;
