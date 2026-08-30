@@ -1,7 +1,17 @@
 {
   "name": "react-passport-scanner",
-  "version": "1.1.3",
+  "version": "1.1.5",
   "type": "module",
+  "keywords": [
+    "react",
+    "passport",
+    "scanner",
+    "ocr",
+    "mrz",
+    "tesseract",
+    "id-scanner",
+    "identity-verification"
+  ],
   "main": "dist/react-passport-scanner.umd.js",
   "module": "dist/react-passport-scanner.es.js",
   "types": "dist/index.d.ts",
