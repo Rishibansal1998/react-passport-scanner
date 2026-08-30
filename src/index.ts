@@ -1,3 +1,4 @@
+import './styles.css';
 export { default as PassportScanner } from './App';
 export * from './mrzDetector';
 export * from './mrzNormalizer';

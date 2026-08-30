@@ -29,7 +29,7 @@ The SDK provides a pre-built, ready-to-use component called `PassportScanner`. I
 ```tsx
 import React from 'react';
 import { PassportScanner } from 'react-passport-scanner';
-import 'react-passport-scanner/dist/style.css'; // Optional: import default styles if available
+import 'react-passport-scanner/style.css'; // Optional: import default styles if available
 
 function App() {
   // This function receives the parsed passport JSON when a scan succeeds!
