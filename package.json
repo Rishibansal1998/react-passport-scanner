@@ -1,0 +1,37 @@
+{
+  "name": "react-passport-scanner",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/react-passport-scanner.umd.js",
+  "module": "dist/react-passport-scanner.es.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/react-passport-scanner.es.js",
+      "require": "./dist/react-passport-scanner.umd.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./style.css": "./dist/style.css"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "test": "tsc -p tsconfig.tests.json && node --test tests/mrzDetector.test.mjs",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "tesseract.js": "^6.0.1"
+  },
+  "peerDependencies": {
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "@vitejs/plugin-react": "^5.0.2",
+    "typescript": "^5.8.3",
+    "vite": "^7.0.6",
+    "vite-plugin-dts": "^4.0.0"
+  }
+}
