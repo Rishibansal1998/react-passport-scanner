@@ -1,5 +1,10 @@
 # React Passport Scanner
 
+[![NPM Version](https://img.shields.io/npm/v/react-passport-scanner)](https://www.npmjs.com/package/react-passport-scanner)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-%E2%9C%A8-success)](https://react-passport-scanner.netlify.app)
+
+👉 **[Try the Live Demo Here](https://react-passport-scanner.netlify.app)**
+
 A browser-only passport/MRZ (Machine Readable Zone) OCR SDK for React using Canvas and Tesseract.js.
 
 This library provides a drop-in React component to scan passports directly in the browser, extracting MRZ data, cross-validating it, and parsing it into structured passport information.
