@@ -32,10 +32,18 @@ import { PassportScanner } from 'react-passport-scanner';
 import 'react-passport-scanner/dist/style.css'; // Optional: import default styles if available
 
 function App() {
+  // This function receives the parsed passport JSON when a scan succeeds!
+  const handleScan = (passportData) => {
+    console.log("Successfully scanned passport:", passportData);
+    
+    // You can now use this data to auto-fill forms, send to your backend, etc.
+    // alert(`Hello ${passportData.given_names}!`);
+  };
+
   return (
     <div style={{ padding: '20px' }}>
       <h1>Passport Verification</h1>
-      <PassportScanner />
+      <PassportScanner onScan={handleScan} />
     </div>
   );
 }

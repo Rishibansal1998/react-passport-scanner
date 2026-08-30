@@ -1183,7 +1183,7 @@ async function recognize(
       result.data.confidence,
 
     lines:
-      result.data.lines,
+      (result.data as any).lines,
 
     timeMs:
       Math.round(
@@ -1426,7 +1426,7 @@ function rotateCanvasExact(
 function extractOCRLines(
   output: Awaited<ReturnType<typeof recognize>>
 ): OCRLine[] {
-  return (output.data.lines ?? [])
+  return ((output.data as any).lines ?? [])
     .map((line: any) => {
       const x0 = line.bbox?.x0 ?? 0;
       const y0 = line.bbox?.y0 ?? 0;
@@ -1444,7 +1444,7 @@ function extractOCRLines(
       };
     })
     .filter(
-      line =>
+      (line: OCRLine) =>
         line.bbox.width > 0 &&
         line.bbox.height > 0
     );
@@ -1469,7 +1469,15 @@ function sortOrientedCandidates(
   });
 }
 
-export default function App() {
+export type PassportScannerProps = {
+  onScan?: (result: any) => void;
+  hideTitle?: boolean;
+  hideResults?: boolean;
+  className?: string;
+  style?: React.CSSProperties;
+};
+
+export default function App({ onScan, hideTitle = false, hideResults = false, className, style }: PassportScannerProps = {}) {
   const [file, setFile] = useState<File | null>(null);
   const [url, setUrl] = useState("");
   const [status, setStatus] = useState("Choose an image");
@@ -1924,7 +1932,7 @@ export default function App() {
         issueDate,
       };
 
-      setResult({
+      const finalResult = {
         success: !!accepted,
         rawText: best?.text ?? "",
         mrz: acceptedLines.join("\n"),
@@ -1934,7 +1942,12 @@ export default function App() {
         crop: selectedCrop,
         attempts,
         diagnostics,
-      });
+      };
+      
+      setResult(finalResult);
+      if (onScan && finalResult.success) {
+        onScan(finalResult.passport);
+      }
 
       setStatus(
         accepted
@@ -1956,18 +1969,20 @@ export default function App() {
   }
 
   return (
-    <div className="page">
+    <div className={className || "page"} style={style}>
       <div className="card">
-        <div className="head">
-          <div>
-            <small>BROWSER / ON-DEVICE OCR</small>
-            <h1>Passport OCR</h1>
-            <p>
-              Position-independent MRZ detection + Canvas + Tesseract.js. No backend.
-            </p>
+        {!hideTitle && (
+          <div className="head">
+            <div>
+              <small>BROWSER / ON-DEVICE OCR</small>
+              <h1>Passport OCR</h1>
+              <p>
+                Position-independent MRZ detection + Canvas + Tesseract.js. No backend.
+              </p>
+            </div>
+            <b>LOCAL</b>
           </div>
-          <b>LOCAL</b>
-        </div>
+        )}
 
         <div className="controls">
           <label className="upload">
@@ -2035,7 +2050,7 @@ export default function App() {
         <div className="status">{status}</div>
         {error && <div className="error">{error}</div>}
 
-        {result && (
+        {!hideResults && result && (
           <div className="results">
             <div className="panel">
               <h2>OCR</h2>

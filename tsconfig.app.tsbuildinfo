@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/index.ts","./src/main.tsx","./src/mrzcandidatescorer.ts","./src/mrzcrossvalidator.ts","./src/mrzdetector.ts","./src/mrznormalizer.ts","./src/mrzreconstructor.ts"],"version":"5.9.3"}
