@@ -100,3 +100,7 @@ npm run test    # Run test suite
 ## Privacy & Security
 
 This SDK is designed with privacy in mind. Passport images and parsed information remain locally in the browser memory. Text is never written to console logs or sent over the network unless explicitly handled by the consuming application.
+
+## Feedback & Contributions
+
+Feedback and contributions are highly welcome! If you find a bug or have a feature request, please open an issue on GitHub.
