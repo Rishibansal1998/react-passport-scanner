@@ -4,10 +4,7 @@ import {
   useState,
 } from "react";
 
-import {
-  createWorker,
-  type Worker,
-} from "tesseract.js";
+import type { Worker } from "tesseract.js";
 
 import {
   detectMRZCandidates,
@@ -1529,6 +1526,7 @@ export default function App({ onScan, hideTitle = false, hideResults = false, cl
       );
 
       setStatus("Loading Tesseract...");
+      const { createWorker } = await import("tesseract.js");
       worker = await createWorker("eng", 1, {
         logger: message => {
           if (message.status === "recognizing text") {

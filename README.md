@@ -14,6 +14,7 @@ This library provides a drop-in React component to scan passports directly in th
 ## Features
 
 - **Local Processing**: All processing runs in the browser using Web Workers.
+- **Lazy Loaded OCR**: Tesseract is dynamically imported only when a scan starts, keeping your app's initial bundle size tiny.
 - **Robust Pipeline**: Includes advanced Canvas preprocessing, thresholding, and rotation testing.
 - **MRZ Detection**: Detects and parses standard TD3 MRZ formats.
 - **Cross-Validation**: Validates checksums and ICAO rules to ensure high accuracy.
