@@ -773,13 +773,68 @@ export function detectMRZFromOCR(
 /**
  * Visual detector fallback.
  */
-type TextBand = {
+export type TextBand = {
   x: number;
   y: number;
   width: number;
   height: number;
   density: number;
 };
+
+export function scoreVisualPair(
+  first: TextBand,
+  second: TextBand,
+  imageWidth: number,
+  imageHeight: number
+): MRZCandidate | null {
+  const gap = second.y - (first.y + first.height);
+  if (gap < 0) return null;
+  if (gap > Math.max(first.height, second.height) * 4) return null;
+
+  const left = Math.min(first.x, second.x);
+  const right = Math.max(first.x + first.width, second.x + second.width);
+  const top = Math.min(first.y, second.y);
+  const bottom = Math.max(first.y + first.height, second.y + second.height);
+  const boxWidth = right - left;
+  const boxHeight = bottom - top;
+
+  if (boxWidth < imageWidth * 0.20) return null;
+
+  const widthScore = closeness(boxWidth / Math.max(boxHeight, 1), 12, 10);
+  const spacingScore = closeness(gap / Math.max((first.height + second.height) / 2, 1), 0.7, 2.5);
+  const alignmentScore = clamp(1 - Math.abs(first.x - second.x) / Math.max(boxWidth, 1));
+  const density = (first.density + second.density) / 2;
+  const densityScore = clamp(density * 4);
+
+  const confidence =
+    widthScore * 0.35 +
+    spacingScore * 0.25 +
+    alignmentScore * 0.20 +
+    densityScore * 0.20;
+
+  return {
+    format: "TD3",
+    boundingBox: {
+      x: left,
+      y: top,
+      width: boxWidth,
+      height: boxHeight,
+    },
+    confidence,
+    source: "visual",
+    features: {
+      lineCountScore: 1,
+      lineLengthScore: widthScore,
+      horizontalDensityScore: densityScore,
+      characterCompatibilityScore: 0,
+      lineSpacingScore: spacingScore,
+      alignmentScore,
+      pLessThanScore: 0,
+      nameSeparatorScore: 0,
+      lowerPositionScore: top / Math.max(imageHeight, 1),
+    },
+  };
+}
 
 function getBands(
   image: ImageData
@@ -921,14 +976,14 @@ function getBands(
 
           minX =
             Math.min(
-              minX,
-              x
+               minX,
+               x
             );
 
           maxX =
             Math.max(
-              maxX,
-              x
+               maxX,
+               x
             );
         }
 
@@ -983,163 +1038,10 @@ export function detectMRZCandidates(
       j < bands.length;
       j++
     ) {
-      const first =
-        bands[i];
-
-      const second =
-        bands[j];
-
-      const gap =
-        second.y -
-        (
-          first.y +
-          first.height
-        );
-
-      if (gap < 0) {
-        continue;
+      const candidate = scoreVisualPair(bands[i], bands[j], image.width, image.height);
+      if (candidate) {
+        candidates.push(candidate);
       }
-
-      if (
-        gap >
-        Math.max(
-          first.height,
-          second.height
-        ) * 4
-      ) {
-        break;
-      }
-
-      const left =
-        Math.min(
-          first.x,
-          second.x
-        );
-
-      const right =
-        Math.max(
-          first.x +
-            first.width,
-          second.x +
-            second.width
-        );
-
-      const top =
-        Math.min(
-          first.y,
-          second.y
-        );
-
-      const bottom =
-        Math.max(
-          first.y +
-            first.height,
-          second.y +
-            second.height
-        );
-
-      const boxWidth =
-        right - left;
-
-      const boxHeight =
-        bottom - top;
-
-      if (
-        boxWidth <
-        image.width * 0.20
-      ) {
-        continue;
-      }
-
-      const widthScore =
-        closeness(
-          boxWidth /
-            Math.max(
-              boxHeight,
-              1
-            ),
-          12,
-          10
-        );
-
-      const spacingScore =
-        closeness(
-          gap /
-            Math.max(
-              (
-                first.height +
-                second.height
-              ) / 2,
-              1
-            ),
-          0.7,
-          2.5
-        );
-
-      const alignmentScore =
-        clamp(
-          1 -
-            Math.abs(
-              first.x -
-                second.x
-            ) /
-              Math.max(
-                boxWidth,
-                1
-              )
-        );
-
-      const density =
-        (
-          first.density +
-          second.density
-        ) / 2;
-
-      const densityScore =
-        clamp(
-          density * 4
-        );
-
-      const confidence =
-        widthScore * 0.35 +
-        spacingScore * 0.25 +
-        alignmentScore * 0.20 +
-        densityScore * 0.20;
-
-      candidates.push({
-        format: "TD3",
-
-        boundingBox: {
-          x: left,
-          y: top,
-          width: boxWidth,
-          height: boxHeight,
-        },
-
-        confidence,
-
-        source: "visual",
-
-        features: {
-          lineCountScore: 1,
-          lineLengthScore:
-            widthScore,
-          horizontalDensityScore:
-            densityScore,
-          characterCompatibilityScore: 0,
-          lineSpacingScore:
-            spacingScore,
-          alignmentScore,
-          pLessThanScore: 0,
-          nameSeparatorScore: 0,
-          lowerPositionScore:
-            top /
-            Math.max(
-              image.height,
-              1
-            ),
-        },
-      });
     }
   }
 
